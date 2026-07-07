@@ -1,0 +1,30 @@
+# Local runtime and deployment copies
+vercel-deploy/
+tmp-zeabur-data/
+.tmp-vercel-blob/
+work/
+
+# Codex/session metadata
+.agents/
+.codex/
+.git-invalid-backup/
+
+# Real business data and account data live in Vercel Blob, not GitHub
+outputs/jingcai-logistics-maintenance-data.json
+outputs/jingcai-users.json
+outputs/shop-maintenance-data.json
+
+# Local logs and machine-specific helper files
+outputs/*.log
+outputs/*.err.log
+outputs/cloudflared.exe
+outputs/start-*.bat
+outputs/start-*.vbs
+outputs/外部連線設定.txt
+outputs/使用說明.txt
+
+# Dependencies and local environment files
+node_modules/
+.env
+.env.*
+!.env.example

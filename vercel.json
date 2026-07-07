@@ -1,0 +1,22 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/outputs/car-maintenance-records.html" },
+    { "source": "/manifest.webmanifest", "destination": "/outputs/manifest.webmanifest" },
+    { "source": "/service-worker.js", "destination": "/outputs/service-worker.js" },
+    { "source": "/offline.html", "destination": "/outputs/offline.html" },
+    { "source": "/app-icon.svg", "destination": "/outputs/app-icon.svg" },
+    { "source": "/app-icon-192.png", "destination": "/outputs/app-icon-192.png" },
+    { "source": "/app-icon-512.png", "destination": "/outputs/app-icon-512.png" },
+    { "source": "/apple-touch-icon.png", "destination": "/outputs/apple-touch-icon.png" }
+  ],
+  "headers": [
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [{ "key": "Content-Type", "value": "application/manifest+json; charset=utf-8" }]
+    },
+    {
+      "source": "/service-worker.js",
+      "headers": [{ "key": "Content-Type", "value": "text/javascript; charset=utf-8" }]
+    }
+  ]
+}

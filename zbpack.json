@@ -1,0 +1,4 @@
+{
+  "build_command": "echo no build required",
+  "start_command": "npm start"
+}
