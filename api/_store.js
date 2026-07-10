@@ -55,10 +55,11 @@ function ensureLocalFile(file, bundledFile, fallbackValue) {
 }
 
 async function readData() {
-  const fallback = { selectedVehicleId: "", vehicles: [], records: [] };
-  if (hasBlobStore()) return readBlobJson(BLOB_DATA_PATH, BUNDLED_DATA_FILE, fallback);
-  ensureLocalFile(DATA_FILE, BUNDLED_DATA_FILE, fallback);
-  return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+  const fallback = { selectedVehicleId: "", vehicles: [], records: [], revision: 0 };
+  const data = hasBlobStore()
+    ? await readBlobJson(BLOB_DATA_PATH, BUNDLED_DATA_FILE, fallback)
+    : (ensureLocalFile(DATA_FILE, BUNDLED_DATA_FILE, fallback), JSON.parse(fs.readFileSync(DATA_FILE, "utf8")));
+  return { ...data, revision: Number(data.revision) || 0 };
 }
 
 async function writeData(data) {
@@ -67,9 +68,18 @@ async function writeData(data) {
     error.statusCode = 400;
     throw error;
   }
-  if (hasBlobStore()) return writeBlobJson(BLOB_DATA_PATH, data);
+  const current = await readData();
+  if ((Number(data.revision) || 0) !== current.revision) {
+    const error = new Error("資料已被其他裝置更新，請重新整理後再儲存");
+    error.statusCode = 409;
+    throw error;
+  }
+  // ponytail: stale-write detection; use transactional storage if simultaneous writes become common.
+  const next = { ...data, revision: current.revision + 1 };
+  if (hasBlobStore()) return writeBlobJson(BLOB_DATA_PATH, next).then(() => next);
   ensureLocalFile(DATA_FILE, BUNDLED_DATA_FILE, { selectedVehicleId: "", vehicles: [], records: [] });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf8");
+  fs.writeFileSync(DATA_FILE, JSON.stringify(next, null, 2), "utf8");
+  return next;
 }
 
 function normalizeUsers(users) {

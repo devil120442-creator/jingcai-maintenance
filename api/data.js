@@ -4,8 +4,7 @@ module.exports = async function handler(req, res) {
   try {
     if (req.method === "GET") return sendJson(res, await readData());
     if (req.method === "POST") {
-      await writeData(await readBody(req));
-      return sendJson(res, { ok: true });
+      return sendJson(res, await writeData(await readBody(req)));
     }
     return sendJson(res, { error: "Method not allowed" }, 405);
   } catch (error) {

@@ -95,8 +95,13 @@ const server = http.createServer(async (req, res) => {
       if (!Array.isArray(data.vehicles) || !Array.isArray(data.records)) {
         return sendJson(res, { error: "資料格式不正確" }, 400);
       }
-      fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), "utf8");
-      return sendJson(res, { ok: true });
+      const current = readData() || { revision: 0 };
+      if ((Number(data.revision) || 0) !== (Number(current.revision) || 0)) {
+        return sendJson(res, { error: "資料已被其他裝置更新，請重新整理後再儲存" }, 409);
+      }
+      const next = { ...data, revision: (Number(current.revision) || 0) + 1 };
+      fs.writeFileSync(DATA_FILE, JSON.stringify(next, null, 2), "utf8");
+      return sendJson(res, next);
     }
 
     return serveStatic(url, res);
@@ -213,7 +218,8 @@ function getSessionToken(req) {
 
 function readData() {
   if (!fs.existsSync(DATA_FILE)) return null;
-  return JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+  const data = JSON.parse(fs.readFileSync(DATA_FILE, "utf8"));
+  return { ...data, revision: Number(data.revision) || 0 };
 }
 
 function sendJson(res, data, status = 200) {
