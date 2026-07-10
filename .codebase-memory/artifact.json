@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "",
+    "indexed_at": "2026-07-10T10:10:38Z",
+    "project": "jingcai-maintenance",
+    "nodes": 120,
+    "edges": 176,
+    "original_size": 1310720,
+    "compressed_size": 79654,
+    "compression_level": 9
+}
