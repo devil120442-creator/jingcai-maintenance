@@ -23,7 +23,7 @@ async function blobSdk() {
 async function readBlobJson(pathname, fallbackFile, fallbackValue) {
   const { get, put } = await blobSdk();
   const result = await get(pathname, { access: "private" }).catch(() => null);
-  if (result?.statusCode === 200 && result.stream) {
+  if (result?.stream) {
     return JSON.parse(await new Response(result.stream).text());
   }
   const initial = fs.existsSync(fallbackFile) ? JSON.parse(fs.readFileSync(fallbackFile, "utf8")) : fallbackValue;
@@ -127,6 +127,7 @@ async function writeUsers(users) {
 function sendJson(res, data, status = 200) {
   res.statusCode = status;
   res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Cache-Control", "no-store, max-age=0");
   res.end(JSON.stringify(data));
 }
 
